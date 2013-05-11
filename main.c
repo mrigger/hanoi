@@ -19,6 +19,7 @@ void placeSource();
 int makeMove();
 int getTopmostPiece(int col);
 void removeTopmostPiece(int col);
+int checkForWin();
 
 int main() {
     int i, j;
@@ -50,6 +51,13 @@ int main() {
         while(gameRunning) {
             system("cls");
             printField();
+
+            if(checkForWin()) {
+                printf("Voce ganhou.");
+                getch();
+                break;
+            }
+
             printf("\n\n>");
             //scanf("%c", &key);
             key = getch();
@@ -73,11 +81,14 @@ int main() {
                 gameRunning = 0;
             }
 
-            if(makeMove()){
+
+            if(makeMove()) {
                 totalMoves++;
                 selectedDestination = -1;
                 selectedSource = -1;
             }
+
+
         }
     }
     return 0;
@@ -109,10 +120,10 @@ void printField() {
         } else {
             place = ' ';
         }
-        for(j = 0; j < maxSize; j++){
-            if(j == maxSize/2){
+        for(j = 0; j < maxSize; j++) {
+            if(j == maxSize/2) {
                 printf("%c", place);
-            }else{
+            } else {
                 printf(" ");
             }
         }
@@ -146,15 +157,15 @@ void printField() {
     for(i = 0; i < 3; i++) {
         char place;
         if(i == selected) {
-            place = 'o';
+            place = 'O';
         } else {
-            place = ' ';
+            place = '-';
         }
-        for(j = 0; j < maxSize; j++){
-            if(j == maxSize/2){
+        for(j = 0; j < maxSize; j++) {
+            if(j == maxSize/2) {
                 printf("%c", place);
-            }else{
-                printf(" ");
+            } else {
+                printf("-");
             }
         }
         printf(" ");
@@ -202,7 +213,7 @@ void placeDestination() {
         selectedDestination = -1;
     } else {
         selectedDestination = selected;
-        if(selectedSource == selected){
+        if(selectedSource == selected) {
             selectedSource = -1;
         }
     }
@@ -213,17 +224,17 @@ void placeSource() {
         selectedSource = -1;
     } else {
         selectedSource = selected;
-        if(selectedDestination == selected){
+        if(selectedDestination == selected) {
             selectedDestination = -1;
         }
     }
 }
 
-int makeMove(){
-    if(selectedDestination >= 0 && selectedSource >= 0){
+int makeMove() {
+    if(selectedDestination >= 0 && selectedSource >= 0) {
         int sourcePiece = getTopmostPiece(selectedSource);
         int destPiece = getTopmostPiece(selectedDestination);
-        if((sourcePiece < destPiece || !destPiece) && sourcePiece){
+        if((sourcePiece < destPiece || !destPiece) && sourcePiece) {
             colunas[selectedDestination][0] = sourcePiece;
             removeTopmostPiece(selectedSource);
             downShift();
@@ -234,10 +245,10 @@ int makeMove(){
     return 0;
 }
 
-int getTopmostPiece(int col){
+int getTopmostPiece(int col) {
     int i;
-    for(i = 0; i < MAX_PEC; i++){
-        if(colunas[col][i]){
+    for(i = 0; i < MAX_PEC; i++) {
+        if(colunas[col][i]) {
             return colunas[col][i];
         }
     }
@@ -245,12 +256,26 @@ int getTopmostPiece(int col){
     return 0;
 }
 
-void removeTopmostPiece(int col){
+void removeTopmostPiece(int col) {
     int i;
-    for(i = 0; i < MAX_PEC; i++){
-        if(colunas[col][i]){
+    for(i = 0; i < MAX_PEC; i++) {
+        if(colunas[col][i]) {
             colunas[col][i] = 0;
             return;
         }
     }
+}
+
+int checkForWin() {
+    int i, j, colcount[] = {0, 0}, prev;
+    for(i = 1; i < 3; i++) {
+        prev = 0;
+        for(j = 0; j < MAX_PEC; j++) {
+            if(colunas[i][j] == prev + 1) {
+                prev = colunas[i][j];
+                colcount[i-1]++;
+            }
+        }
+    }
+    return (colcount[0] == num_pecas) || (colcount[1] == num_pecas);
 }
