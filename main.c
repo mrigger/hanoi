@@ -104,7 +104,7 @@ int num_jogadas(int pecas) {
 
 void printField() {
     int maxSize = MAX_PEC*2 - 1;
-    char lines[MAX_PEC][maxSize+3];
+    char lines[MAX_PEC][61];
     int i, j, k, c;
 
     printf("Moves: %d\nMin. mov.: %d\n",
